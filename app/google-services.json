@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "326771068075",
+    "firebase_url": "https://supremecourt-445e5.firebaseio.com",
+    "project_id": "supremecourt-445e5",
+    "storage_bucket": "supremecourt-445e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326771068075:android:d2f410f7b8c0f210",
+        "android_client_info": {
+          "package_name": "com.example.skynet.supremecourt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326771068075-he5pg99il5obo4pgnchjq9u98qsn7m6d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.skynet.supremecourt",
+            "certificate_hash": "a238f64d673ed176b2768518f1563ea8be358fa4"
+          }
+        },
+        {
+          "client_id": "326771068075-ubnai7vauin4frlu6qbt0op2ft5e9n7u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrpoAKQHeDGUiXpqg96KkaIEyqza6r2ZI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326771068075-ubnai7vauin4frlu6qbt0op2ft5e9n7u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
