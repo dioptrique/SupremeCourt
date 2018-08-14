@@ -33,12 +33,13 @@ public final class AppData {
     public Set<String> lawFirms;
     private HashMap<String,TreeMap<String,HashSet<String>>> venueToDatesToHearingIds;
 
-    public AppData(Application appContext){
+    public AppData(Application appContext) {
         try {
             this.today = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS")).parse("2018-07-18 00:00:00:000");
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         this.appContext = appContext;
         this.realData = this.readFromAssets("realData.json",appContext);
         this.realDataNested = this.readFromAssets("realDataNested.json",appContext);
@@ -58,7 +59,6 @@ public final class AppData {
         c = Calendar.getInstance();
         c.setTime(today);
         c.add(Calendar.DATE,window);
-
 
         Set<String> hearingIds = lawFirmToHearingIds.get(lawFirm);
         HashMap<String,ArrayList<String>> dateToHearingIdsInWindow = new HashMap<>();
@@ -80,7 +80,6 @@ public final class AppData {
             }
         }
 
-
         return dateToHearingIdsInWindow;
     }
 
@@ -95,7 +94,7 @@ public final class AppData {
                 if(parties.length() != 0) {
                     for(int j = 0; j < parties.length(); j++) {
                         JSONObject party = (JSONObject) parties.getJSONObject(j);
-                        if(party.has("Solicitors")){
+                        if(party.has("Solicitors")) {
                             JSONArray solicitors = (JSONArray) ((JSONObject) party.getJSONObject("Solicitors"))
                                     .getJSONArray("Solicitor");
                             if(solicitors.length() != 0) {
@@ -115,10 +114,8 @@ public final class AppData {
                                 }
                             }
                         }
-
                     }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
                 return null;

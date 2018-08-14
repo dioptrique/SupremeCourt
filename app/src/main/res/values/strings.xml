@@ -8,4 +8,21 @@
     <string name="title_activity_scheduling">SchedulingActivity</string>
     <string name="your_name">Your Name</string>
     <string name="Mobile_no">Mobile no.</string>
+    <string name="enterNumber">Enter your mobile no:</string>
+    <string name="submit">Submit</string>
+    <string name="accept">accept</string>
+    <string name="reject">reject</string>
+    <string name="bookNow">Book now</string>
+    <string name="slotAlreadyTaken">Time slot is already taken!</string>
+    <string name="bookingSuccess">Booking was successful! Wait for other parties to confirm.</string>
+    <string name="bookingSingleSuccess">Booking Success!</string>
+    <string name="phoneNoSuccess">Phone number successfully registered!</string>
+    <string name="phoneNoFailure">Failed to register phone! Try again.</string>
+    <string name="loading">Loading...</string>
+    <string name="errorGettingTimeslots">Eror getting timeslots. Try reloading the page.</string>
+    <string name="waitingForOthers">Waiting for other parties</string>
+    <string name="bookingFailed">Booking failed! Please try again a while later.</string>
+    <string name="noNumberError">Enter at least one party\'s number</string>
+    <string name="noTimeslotSelected">Select a timeslot for the hearing</string>
+    <string name="timeSlotBooked">Time slot is already booked. Please wait.</string>
 </resources>

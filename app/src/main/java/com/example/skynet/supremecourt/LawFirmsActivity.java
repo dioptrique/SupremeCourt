@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -22,6 +23,8 @@ public class LawFirmsActivity extends AppCompatActivity implements SearchView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         // JSON data fetched from assets
         data = MyApplication.data;
         setContentView(R.layout.activity_law_firms);

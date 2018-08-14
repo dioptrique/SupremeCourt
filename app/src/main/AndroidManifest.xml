@@ -10,10 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".MessagingService">
+        <service android:name=".MessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
@@ -52,7 +51,17 @@
         </activity>
         <activity
             android:name=".SchedulingActivity"
-            android:label="@string/title_activity_scheduling" />
+            android:label="@string/title_activity_scheduling"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="com.example.skynet.supremecourt_TARGET_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".PhoneNumberActivity" />
+        <activity android:name=".AcceptBookingActivity" />
+        <activity android:name=".BookedActivity"></activity>
     </application>
 
 </manifest>
