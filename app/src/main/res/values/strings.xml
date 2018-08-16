@@ -25,4 +25,9 @@
     <string name="noNumberError">Enter at least one party\'s number</string>
     <string name="noTimeslotSelected">Select a timeslot for the hearing</string>
     <string name="timeSlotBooked">Time slot is already booked. Please wait.</string>
+    <string name="failedToGetHearingDetails">Failed to fetch hearing details. Please try again</string>
+    <string name="failedToCheckStatus">Filed to check status of booking. Please try again.</string>
+    <string name="failedToGetLawFirms">Failed to fetch law firms. Please try again.</string>
+    <string name="failedToGetLawFirmHearings">Failed to fetch law firm hearings. Please try again.</string>
+    <string name="slotOutdated">Time slot is outdated!</string>
 </resources>

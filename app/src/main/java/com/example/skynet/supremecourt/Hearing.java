@@ -34,11 +34,10 @@ public class Hearing {
                 e.printStackTrace();
             }
             this.justDate = dateParser.format(date).split(" ")[0];
-            this.justTime = dateParser.format(date).split(" ")[1];
+            this.justTime = dateParser.format(date).split(" ")[1].substring(0,5);
             this.venue = hearingJSON.getString("Venue");
 
-            JSONArray parties =(JSONArray) ((JSONObject) hearingJSON.getJSONObject("PartiesList"))
-                                                         .getJSONArray("Party");
+            JSONArray parties = hearingJSON.getJSONArray("Parties");
             for(int i = 0; i < parties.length(); i++) {
                 JSONObject party = (JSONObject) parties.getJSONObject(i);
                 this.parties.add(new Party(party.getString("PartyName"), party.getString("PartyType")));

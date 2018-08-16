@@ -21,7 +21,6 @@ public class MessagingService extends FirebaseMessagingService {
         String phoneNo = getSharedPreferences("DATA",MODE_PRIVATE).getString("phoneNo","null");
         // Check if user has already given his phoneNo
         if(!phoneNo.equals("null")) {
-            //TODO Make api call to add phoneNo to regId mapping to db
             RequestParams params = new RequestParams();
             params.add("phoneNo",phoneNo);
             params.add("registrationId",registrationId);

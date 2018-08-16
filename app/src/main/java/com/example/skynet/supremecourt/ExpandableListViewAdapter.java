@@ -15,16 +15,15 @@ import java.util.HashMap;
 
 public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     Context context;
-    HashMap<String,ArrayList<String>> hearings;
+    HashMap<String,ArrayList<Hearing>> dateToHearings;
     ArrayList<String> dates;
     LayoutInflater inflater;
 
-    public ExpandableListViewAdapter(Context context, HashMap<String,ArrayList<String>> hearings) {
+    public ExpandableListViewAdapter(Context context, HashMap<String,ArrayList<Hearing>> dateToHearings) {
         this.context = context;
-        this.hearings = hearings;
-        this.dates = new ArrayList<>(this.hearings.keySet());
+        this.dateToHearings = dateToHearings;
+        this.dates = new ArrayList<>(this.dateToHearings.keySet());
         inflater = LayoutInflater.from(context);
-
     }
 
     @Override
@@ -36,7 +35,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int i) {
         // Number of hearings in each date
-        return hearings.get(dates.get(i)).size();
+        return dateToHearings.get(dates.get(i)).size();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int i, int i1) {
-        return hearings.get(dates.get(i)).get(i1);
+        return dateToHearings.get(dates.get(i)).get(i1);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup parent) {
         View mview = inflater.inflate(R.layout.case_item, parent, false);
         TextView textView = (TextView) mview.findViewById(R.id.case_name);
-        final Hearing currHearing = MyApplication.data.getHearing(hearings.get(dates.get(i)).get(i1));
+        final Hearing currHearing = dateToHearings.get(dates.get(i)).get(i1);
         textView.setText(currHearing.justTime+" | " +
                          currHearing.hearingId+" | "+
                          currHearing.caseName+" | "+

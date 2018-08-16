@@ -53,210 +53,254 @@ public class SchedulingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheduling);
 
-        Log.d("Ananda","Intent with action: "+getIntent().getAction()+", extra: "+getIntent().getStringExtra("hearingId"));
-        hearing = MyApplication.data.getHearing(getIntent().getStringExtra("hearingId"));
+        // Get the view instances of the of the current activity
+        final View list = findViewById(R.id.list_of_parties);
+        final TextView date = (TextView) findViewById(R.id.date);
+        final TextView caseInfo = (TextView) findViewById(R.id.case_info);
+        slotSelector = (RadioGroup) findViewById(R.id.slot_selector);
+        this.inflater = getLayoutInflater();
 
         final Button button = (Button) findViewById(R.id.book_slot);
         button.setClickable(false);
         button.setText(R.string.loading);
 
-        this.parties = hearing.parties;
-        this.inflater = getLayoutInflater();
+        Log.d("Ananda","Intent with action: "+getIntent().getAction()+", extra: "+getIntent().getStringExtra("hearingId"));
+        String hearingId = getIntent().getStringExtra("hearingId");
 
+        // Make api call to get the hearing details of the current hearing
         RequestParams params = new RequestParams();
-        params.add("hearingId",hearing.hearingId);
-        // Make api call to check booking status of current booking
-        SupremeCourtRESTClient.post("checkBookingStatus",params,new JsonHttpResponseHandler(){
+        params.put("hearingId",hearingId);
+        SupremeCourtRESTClient.post("/getHearing",params,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                String status = null;
-                String bookerNo = null;
-                String timeslot = null;
-                ArrayList<String> acceptedParties = new ArrayList<>();
                 try {
-                    status = ((JSONObject) response.getJSONObject("response")).getString("status");
-                    Log.d("Ananda","booking status: "+status);
-                    if(!status.equals("idle")) {
-                        Log.d("Ananda","Status is not idle");
-                        bookerNo = ((JSONObject) response.getJSONObject("response")).getString("bookerNo");
-                        Log.d("Ananda","bookerNo "+bookerNo);
-                        timeslot = ((JSONObject) response.getJSONObject("response")).getString("timeslot");
-                        Log.d("Ananda","timeslot "+timeslot);
-                        JSONArray acceptedPartiesJSON =  ((JSONObject) response.getJSONObject("response")).getJSONArray("acceptedParties");
-                        for(int i = 0; i < acceptedPartiesJSON.length(); i++) {
-                            acceptedParties.add(acceptedPartiesJSON.getString(i));
-                        }
-
-                        Log.d("Ananda","parsed response objects"+ bookerNo +" "+timeslot);
-                        for(String s : acceptedParties) {
-                            Log.d("Ananda",s);
-                        }
-                        if (status.equals("booked")) {
-                            Log.d("Ananda","Hearing is already booked. Redirecting to booked activity.");
-                            // Start booked activity
-                            Intent intent = new Intent(context,BookedActivity.class);
-                            intent.putExtra("hearingId",hearing.hearingId);
-                            intent.putExtra("timeslot",timeslot);
-                            Log.d("Ananda","Passing "+hearing.hearingId+" and "+timeslot+" to BookedActivity.");
-                            startActivity(intent);
-                            Log.d("Ananda","Finishing schedule activity");
-                            //Toast.makeText(context,"Finishing schedule activity",Toast.LENGTH_SHORT).show();
-                            //finish();
-                        } else if(status.equals("rejected")){
-                            Log.d("Ananda","Status rejected. Enable booking");
-                            button.setClickable(true);
-                            button.setText(R.string.bookNow);
-                        } else if(status.equals("expired")){
-                            Log.d("Ananda","Status expired. Enable booking");
-                            button.setClickable(true);
-                            button.setText(R.string.bookNow);
-                        } else if (bookerNo.equals(getSharedPreferences("DATA", MODE_PRIVATE).getString("phoneNo", null)) && status.equals("ongoing")) {
-                                Log.d("Ananda","status is ongoing and current user sent booking");
-                                // If current user is the booker disable booking button
-                                button.setClickable(false);
-                                button.setText(R.string.waitingForOthers);
-                                Log.d("Ananda","button set to unclickable");
-                        } else if (status.equals("ongoing")) {
-                                Log.d("Ananda","status is ongoing and current user did not send booking");
-
-                                boolean alreadyAccepted = false;
-                                // Check if current user has already accepted booking
-                                for (String partyNo : acceptedParties) {
-                                    if (partyNo.equals(getSharedPreferences("DATA", MODE_PRIVATE).getString("phoneNo", null))) {
-                                        // If user has already accepted booking just disable the
-                                        // booking button
-                                        button.setClickable(false);
-                                        button.setText(R.string.waitingForOthers);
-                                        alreadyAccepted = true;
-                                        break;
-                                    }
-                                }
-                                if(!alreadyAccepted) {
-                                    Log.d("Ananda","Hearing is ongoing and user has yet to book. Redirecting to acceptance activity!.");
-                                    // redirect user to acceptBookingActivity page
-                                    Intent intent = new Intent(context,AcceptBookingActivity.class);
-                                    intent.putExtra("hearingId",hearing.hearingId);
-                                    intent.putExtra("timeslot",timeslot);
-                                    startActivity(intent);
-                                    finish();
-                                }
-
-                        }
-                    } else {
-                        button.setText(R.string.bookNow);
-                        button.setClickable(true);
-                    }
-
+                    hearing = new Hearing(response.getJSONObject("hearing"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        });
+                parties = hearing.parties;
 
-
-        View list = findViewById(R.id.list_of_parties);
-
-        // Display hearing details
-        TextView date = (TextView) findViewById(R.id.date);
-        date.setText(hearing.justTime + " | " + hearing.justDate + " | "+hearing.venue);
-        TextView caseInfo = (TextView) findViewById(R.id.case_info);
-        caseInfo.setText(hearing.hearingId + " | " + hearing.caseNo + " | " + hearing.caseName);
-
-        for(Party party : parties) {
-            // Display each party
-            View partyItem = inflater.inflate(R.layout.party_item,null);
-
-            TextView partyType = partyItem.findViewById(R.id.party_label);
-            partyType.setText(party.partyType + ":");
-            TextView partyName = partyItem.findViewById(R.id.party_name);
-            partyName.setText(party.partyName);
-            ((ViewGroup) list).addView(partyItem);
-
-            // Map each party to mobile_no input view to access the mobile_no. later
-            partyToPhoneNo.put(party,partyItem.findViewById(R.id.mobile_no));
-        }
-
-        slotSelector = (RadioGroup) findViewById(R.id.slot_selector);
-        setAvailableTimeSlots();
-        // Handle clicking of book slot for first time
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                button.setClickable(false);
-                button.setText(R.string.loading);
-
-                List<String> validPhoneNos = new ArrayList<>();
-                // Get only the phoneNos which are entered
-                for(View phoneNoView : partyToPhoneNo.values()) {
-                    String currPhoneNo = ((EditText) phoneNoView).getText().toString();
-                    if(!currPhoneNo.equals("")) {
-                        // Add the phoneNos to an array to be sent to notification sending api
-                        validPhoneNos.add(currPhoneNo);
-                    }
-                }
-
-                int checkedRadioButtonId = slotSelector.getCheckedRadioButtonId();
-                boolean valid = validate(validPhoneNos,checkedRadioButtonId);
-                if(!valid) {
-                    button.setText(R.string.bookNow);
-                    button.setClickable(true);
-                    return;
-                }
-                String selectedTimeSlot = ((RadioButton) findViewById(checkedRadioButtonId)).getText().toString();
-
-                // Send validPhoneNos through api call for notifications to be sent
+                // Make api call to check booking status of current booking
                 RequestParams params = new RequestParams();
-                params.put("phoneNos",validPhoneNos);
-                params.put("bookerNo",getSharedPreferences("DATA",MODE_PRIVATE).getString("phoneNo",null));
-                params.put("timeslot",selectedTimeSlot);
-                params.put("hearingId",hearing.hearingId);
-                // Exclude booker from pendingPartiesCount
-                params.put("partyCount",hearing.parties.size()-1);
-                SupremeCourtRESTClient.post("bookNow", params, new JsonHttpResponseHandler() {
+                params.add("hearingId",hearing.hearingId);
+                SupremeCourtRESTClient.post("checkBookingStatus",params,new JsonHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        if(statusCode == 400) {
-                            Toast.makeText(context,R.string.bookingFailed,Toast.LENGTH_SHORT).show();
-                            button.setClickable(true);
-                            button.setText("Book now");
-                            return;
-                        }
+                        String status = null;
+                        String bookerNo = null;
+                        String timeslot = null;
+                        ArrayList<String> acceptedParties = new ArrayList<>();
                         try {
-                            if(response.getBoolean("timeslotAvailable")) {
-                                if(hearing.parties.size() == 1) {
-                                    recreate();
-                                    Log.d("Ananda","Successful booking");
-                                    Toast.makeText(context,R.string.bookingSingleSuccess,Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Log.d("Ananda","Successful booking");
-                                    button.setText(R.string.waitingForOthers);
-                                    Toast.makeText(context,R.string.bookingSuccess,Toast.LENGTH_SHORT).show();
+                            status = ((JSONObject) response.getJSONObject("response")).getString("status");
+                            Log.d("Ananda","booking status: "+status);
+                            if(!status.equals("idle")) {
+                                Log.d("Ananda","Status is not idle");
+                                bookerNo = ((JSONObject) response.getJSONObject("response")).getString("bookerNo");
+                                Log.d("Ananda","bookerNo "+bookerNo);
+                                timeslot = ((JSONObject) response.getJSONObject("response")).getString("timeslot");
+                                Log.d("Ananda","timeslot "+timeslot);
+                                JSONArray acceptedPartiesJSON =  ((JSONObject) response.getJSONObject("response")).getJSONArray("acceptedParties");
+                                for(int i = 0; i < acceptedPartiesJSON.length(); i++) {
+                                    acceptedParties.add(acceptedPartiesJSON.getString(i));
                                 }
-                            }
-                            else {
-                                // Call set available time slots again to update the ongoing/booked slots
-                                // from backend
-                                setAvailableTimeSlots();
-                                Toast.makeText(context,R.string.slotAlreadyTaken,Toast.LENGTH_SHORT).show();
-                                button.setClickable(true);
+
+                                Log.d("Ananda","parsed response objects"+ bookerNo +" "+timeslot);
+                                for(String s : acceptedParties) {
+                                    Log.d("Ananda",s);
+                                }
+                                if (status.equals("booked")) {
+                                    Log.d("Ananda","Hearing is already booked. Redirecting to booked activity.");
+                                    // Start booked activity
+                                    Intent intent = new Intent(context,BookedActivity.class);
+                                    intent.putExtra("hearingId",hearing.hearingId);
+                                    intent.putExtra("timeslot",timeslot);
+                                    Log.d("Ananda","Passing "+hearing.hearingId+" and "+timeslot+" to BookedActivity.");
+                                    startActivity(intent);
+                                    Log.d("Ananda","Finishing schedule activity");
+                                    //
+                                    //finish();
+                                } else if(status.equals("rejected")){
+                                    Log.d("Ananda","Status rejected. Enable booking");
+                                    button.setClickable(true);
+                                    button.setText(R.string.bookNow);
+                                } else if(status.equals("expired")){
+                                    Log.d("Ananda","Status expired. Enable booking");
+                                    button.setClickable(true);
+                                    button.setText(R.string.bookNow);
+                                } else if (bookerNo.equals(getSharedPreferences("DATA", MODE_PRIVATE).getString("phoneNo", null)) && status.equals("ongoing")) {
+                                    Log.d("Ananda","status is ongoing and current user sent booking");
+                                    // If current user is the booker disable booking button
+                                    button.setClickable(false);
+                                    button.setText(R.string.waitingForOthers);
+                                    Log.d("Ananda","button set to unclickable");
+                                } else if (status.equals("ongoing")) {
+                                    Log.d("Ananda","status is ongoing and current user did not send booking");
+
+                                    boolean alreadyAccepted = false;
+                                    // Check if current user has already accepted booking
+                                    for (String partyNo : acceptedParties) {
+                                        if (partyNo.equals(getSharedPreferences("DATA", MODE_PRIVATE).getString("phoneNo", null))) {
+                                            // If user has already accepted booking just disable the
+                                            // booking button
+                                            button.setClickable(false);
+                                            button.setText(R.string.waitingForOthers);
+                                            alreadyAccepted = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!alreadyAccepted) {
+                                        Log.d("Ananda","Hearing is ongoing and user has yet to book. Redirecting to acceptance activity!.");
+                                        // redirect user to acceptBookingActivity page
+                                        Intent intent = new Intent(context,AcceptBookingActivity.class);
+                                        intent.putExtra("hearingId",hearing.hearingId);
+                                        intent.putExtra("timeslot",timeslot);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+
+                                }
+                            } else {
                                 button.setText(R.string.bookNow);
+                                button.setClickable(true);
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        /*
+                            Once the api calls are done and the responses are returned,
+                            render the views with the data received.
+                        */
 
+                        // Display hearing details
+                        date.setText(hearing.justTime + " | " + hearing.justDate + " | "+hearing.venue);
+                        caseInfo.setText(hearing.hearingId + " | " + hearing.caseNo + " | " + hearing.caseName);
+
+                        // Display each party
+                        for(Party party : parties) {
+                            View partyItem = inflater.inflate(R.layout.party_item,null);
+
+                            TextView partyType = partyItem.findViewById(R.id.party_label);
+                            partyType.setText(party.partyType + ":");
+                            TextView partyName = partyItem.findViewById(R.id.party_name);
+                            partyName.setText(party.partyName);
+                            ((ViewGroup) list).addView(partyItem);
+
+                            // Map each party to mobile_no input view to access the mobile_no. later
+                            partyToPhoneNo.put(party,partyItem.findViewById(R.id.mobile_no));
+                        }
+
+                        // Make api call to get available timeslots and render them in the radiogroup
+                        setAvailableTimeSlots();
+
+                        // Handle clicking of book slot for first time
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                button.setClickable(false);
+                                button.setText(R.string.loading);
+
+                                List<String> validPhoneNos = new ArrayList<>();
+                                // Get only the phoneNos which are entered
+                                for(View phoneNoView : partyToPhoneNo.values()) {
+                                    String currPhoneNo = ((EditText) phoneNoView).getText().toString();
+                                    if(!currPhoneNo.equals("")) {
+                                        // Add the phoneNos to an array to be sent to notification sending api
+                                        validPhoneNos.add(currPhoneNo);
+                                    }
+                                }
+
+                                int checkedRadioButtonId = slotSelector.getCheckedRadioButtonId();
+
+                                // Form validation
+                                boolean valid = validate(validPhoneNos,checkedRadioButtonId);
+                                if(!valid) {
+                                    button.setText(R.string.bookNow);
+                                    button.setClickable(true);
+                                    return;
+                                }
+                                String selectedTimeSlot = ((RadioButton) findViewById(checkedRadioButtonId)).getText().toString();
+
+                                // Send validPhoneNos through api call for notifications to be sent
+                                RequestParams params = new RequestParams();
+                                params.put("phoneNos",validPhoneNos);
+                                params.put("bookerNo",getSharedPreferences("DATA",MODE_PRIVATE).getString("phoneNo",null));
+                                params.put("timeslot",selectedTimeSlot);
+                                params.put("hearingId",hearing.hearingId);
+                                // Exclude booker from pendingPartiesCount
+                                params.put("partyCount",hearing.parties.size()-1);
+                                SupremeCourtRESTClient.post("bookNow", params, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        if(statusCode == 400) {
+                                            Toast.makeText(context,R.string.bookingFailed,Toast.LENGTH_SHORT).show();
+                                            button.setClickable(true);
+                                            button.setText("Book now");
+                                            return;
+                                        } else if(statusCode == 200) {
+                                            try {
+                                                String bookingStatus = response.getString("bookingStatus");
+                                                if(bookingStatus.equals("successful")) {
+                                                    if(hearing.parties.size() == 1) {
+                                                        recreate();
+                                                        Log.d("Ananda","Successful booking");
+                                                        Toast.makeText(context,R.string.bookingSingleSuccess,Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Log.d("Ananda","Successful booking");
+                                                        button.setText(R.string.waitingForOthers);
+                                                        Toast.makeText(context,R.string.bookingSuccess,Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                else if(bookingStatus.equals("unsuccessful")){
+                                                    // Call set available time slots again to update the ongoing/booked/outdated slots
+                                                    // from backend
+                                                    setAvailableTimeSlots();
+                                                    String reason = response.getString("reason");
+                                                    if(reason.equals("outdated")) {
+                                                        Toast.makeText(context,R.string.slotOutdated,Toast.LENGTH_SHORT).show();
+                                                        button.setClickable(true);
+                                                        button.setText(R.string.bookNow);
+                                                    } else if(reason.equals("taken")) {
+                                                        Toast.makeText(context,R.string.slotAlreadyTaken,Toast.LENGTH_SHORT).show();
+                                                        button.setClickable(true);
+                                                        button.setText(R.string.bookNow);
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                        Log.d("Ananda","Booking failure: "+errorResponse.toString());
+                                        Toast.makeText(context,R.string.bookingFailed,Toast.LENGTH_SHORT).show();
+                                        button.setClickable(true);
+                                        button.setText("Book now");
+                                    }
+                                });
+                            }
+                        });
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.d("Ananda","Booking failure: "+errorResponse.toString());
-                        Toast.makeText(context,R.string.bookingFailed,Toast.LENGTH_SHORT).show();
-                        button.setClickable(true);
-                        button.setText("Book now");
+                        Toast.makeText(context,R.string.failedToCheckStatus,Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Toast.makeText(context,R.string.failedToGetHearingDetails,Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     void setAvailableTimeSlots() {
@@ -281,7 +325,6 @@ public class SchedulingActivity extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 TreeMap<String,Boolean> map = new TreeMap<>();
 
