@@ -64,10 +64,9 @@ public class AcceptBookingActivity extends AppCompatActivity {
                             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                 //super.onSuccess(statusCode, headers, response);
                                 Log.d("Ananda","Accept Booking call successful!");
-                                Intent intent = new Intent(context,SchedulingActivity.class);
+                                Intent intent = new Intent(context,ScheduleLoadingActivity.class);
                                 intent.putExtra("hearingId",hearing.hearingId);
                                 startActivity(intent);
-                                finish();
                             }
 
                             @Override
@@ -75,11 +74,12 @@ public class AcceptBookingActivity extends AppCompatActivity {
                                 Log.d("Ananda","Booking call failed: "+responseString+ " status code: "+statusCode);
                                 if(statusCode == 200) {
                                     Log.d("Ananda","Accept Booking call successful!");
-                                    Intent intent = new Intent(context,SchedulingActivity.class);
+                                    Intent intent = new Intent(context,ScheduleLoadingActivity.class);
                                     intent.putExtra("hearingId",hearing.hearingId);
                                     startActivity(intent);
-                                    finish();
                                 }
+                                Toast.makeText(context,R.string.acceptBookingFailed,Toast.LENGTH_SHORT);
+                                acceptButton.setClickable(true);
                             }
                         });
                     }
@@ -102,7 +102,6 @@ public class AcceptBookingActivity extends AppCompatActivity {
                                 Intent intent = new Intent(context,SchedulingActivity.class);
                                 intent.putExtra("hearingId",hearing.hearingId);
                                 startActivity(intent);
-                                finish();
                             }
 
                             @Override
@@ -113,13 +112,13 @@ public class AcceptBookingActivity extends AppCompatActivity {
                                     Intent intent = new Intent(context,SchedulingActivity.class);
                                     intent.putExtra("hearingId",hearing.hearingId);
                                     startActivity(intent);
-                                    finish();
                                 }
+                                Toast.makeText(context,R.string.rejectBookingFailed,Toast.LENGTH_SHORT);
+                                acceptButton.setClickable(true);
                             }
                         });
                     }
                 });
-
             }
 
             @Override

@@ -95,7 +95,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     }
 
     private void goToScheduling(Context context, String hearingId) {
-        Intent intent = new Intent(context,SchedulingActivity.class);
+        Intent intent = new Intent(context,ScheduleLoadingActivity.class);
         intent.putExtra("hearingId",hearingId);
         context.startActivity(intent);
     }

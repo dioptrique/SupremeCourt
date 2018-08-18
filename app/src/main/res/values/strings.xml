@@ -18,9 +18,9 @@
     <string name="bookingSingleSuccess">Booking Success!</string>
     <string name="phoneNoSuccess">Phone number successfully registered!</string>
     <string name="phoneNoFailure">Failed to register phone! Try again.</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="errorGettingTimeslots">Eror getting timeslots. Try reloading the page.</string>
-    <string name="waitingForOthers">Waiting for other parties</string>
+    <string name="waitingForOthers">Waiting for other parties…</string>
     <string name="bookingFailed">Booking failed! Please try again a while later.</string>
     <string name="noNumberError">Enter at least one party\'s number</string>
     <string name="noTimeslotSelected">Select a timeslot for the hearing</string>
@@ -30,4 +30,6 @@
     <string name="failedToGetLawFirms">Failed to fetch law firms. Please try again.</string>
     <string name="failedToGetLawFirmHearings">Failed to fetch law firm hearings. Please try again.</string>
     <string name="slotOutdated">Time slot is outdated!</string>
+    <string name="acceptBookingFailed">Unable to accept booking. Please try again.</string>
+    <string name="rejectBookingFailed">Unable to reject booking. Please try again.</string>
 </resources>
