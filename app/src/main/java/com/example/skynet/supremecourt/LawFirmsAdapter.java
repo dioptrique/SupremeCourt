@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,11 +36,11 @@ public class LawFirmsAdapter extends RecyclerView.Adapter<LawFirmsAdapter.MyView
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        Button companyName;
+        TextView companyName;
         int position;
         public MyViewHolder(View itemView) {
             super(itemView);
-            companyName =(Button) itemView.findViewById(R.id.law_firm_name);
+            companyName = itemView.findViewById(R.id.law_firm_name);
         }
     }
 

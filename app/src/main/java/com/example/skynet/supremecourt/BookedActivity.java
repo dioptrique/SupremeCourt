@@ -42,7 +42,7 @@ public class BookedActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                textView.setText(""+hearing.hearingId+" | "+hearing.caseName);
+                textView.setText(""+hearing.caseNo+" | "+hearing.caseName);
                 textView2.setText("Hearing is booked at "+timeslot+" on "+hearing.justDate);
             }
 

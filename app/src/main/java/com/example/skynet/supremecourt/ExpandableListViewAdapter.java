@@ -77,9 +77,9 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         TextView textView = (TextView) mview.findViewById(R.id.case_name);
         final Hearing currHearing = dateToHearings.get(dates.get(i)).get(i1);
         textView.setText(currHearing.justTime+" | " +
-                         currHearing.hearingId+" | "+
-                         currHearing.caseName+" | "+
-                         currHearing.venue);
+                         currHearing.venue+" | "+
+                         currHearing.caseNo+" | "+
+                         currHearing.caseName);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

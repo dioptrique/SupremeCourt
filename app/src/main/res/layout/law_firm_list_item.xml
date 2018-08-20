@@ -4,9 +4,11 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
-    <Button
+    <TextView
         android:id="@+id/law_firm_name"
+        android:clickable="true"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center"/>
+        android:layout_height="60dp"
+        android:gravity="left"
+        android:textStyle="bold"/>
 </android.support.constraint.ConstraintLayout>

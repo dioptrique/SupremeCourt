@@ -48,7 +48,7 @@ public class AcceptBookingActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                bookingDetails.setText(hearing.hearingId+" | "+hearing.caseName);
+                bookingDetails.setText(hearing.caseNo+" | "+hearing.caseName);
                 timeslot.setText("Confirm booking at "+chosenTimeslot+" on  "+hearing.justDate);
 
                 acceptButton.setOnClickListener(new View.OnClickListener() {

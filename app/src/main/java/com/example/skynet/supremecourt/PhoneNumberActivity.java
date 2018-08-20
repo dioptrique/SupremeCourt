@@ -14,6 +14,8 @@ import com.loopj.android.http.*;
 
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 import cz.msebera.android.httpclient.Header;
 
 public class PhoneNumberActivity extends AppCompatActivity {
@@ -37,9 +39,16 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 button.setClickable(false);
 
                 String phoneNo = textView.getText().toString();
+                boolean validNo = Pattern.matches("[9|8][0-9]{7}",phoneNo);
+                if(!validNo) {
+                    Toast.makeText(context,R.string.invalidPhoneNo,Toast.LENGTH_SHORT).show();
+                    button.setText(R.string.bookNow);
+                    button.setClickable(true);
+                    return;
+                }
                 getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
-                        .putBoolean("isFirstRun",false).commit();
-                getSharedPreferences("DATA",MODE_PRIVATE).edit().putString("phoneNo",phoneNo).commit();
+                        .putBoolean("isFirstRun",false).apply();
+                getSharedPreferences("DATA",MODE_PRIVATE).edit().putString("phoneNo",phoneNo).apply();
 
                 // Check if registrationId is currently stored
                 String registrationId = getSharedPreferences("DATA",MODE_PRIVATE).getString("registrationId","null");

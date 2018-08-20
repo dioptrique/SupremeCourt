@@ -63,7 +63,6 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="com.example.skynet.supremecourt_TARGET_NOTIFICATION" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

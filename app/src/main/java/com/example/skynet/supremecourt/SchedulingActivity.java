@@ -24,10 +24,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -49,8 +49,10 @@ public class SchedulingActivity extends Activity {
 
         // Get the view instances of the of the current activity
         final View list = findViewById(R.id.list_of_parties);
+        final TextView caseNo = findViewById(R.id.case_no);
+        final TextView caseName = (TextView) findViewById(R.id.case_name_scheduling);
         final TextView date = (TextView) findViewById(R.id.date);
-        final TextView caseInfo = (TextView) findViewById(R.id.case_info);
+        final TextView venue = findViewById(R.id.venue);
         slotSelector = (RadioGroup) findViewById(R.id.slot_selector);
         this.inflater = getLayoutInflater();
         final Button button = (Button) findViewById(R.id.book_slot);
@@ -73,8 +75,10 @@ public class SchedulingActivity extends Activity {
                 }
                 parties = hearing.parties;
                 // Display hearing details
-                date.setText(hearing.justTime + " | " + hearing.justDate + " | "+hearing.venue);
-                caseInfo.setText(hearing.hearingId + " | " + hearing.caseNo + " | " + hearing.caseName);
+                caseName.setText(hearing.caseName);
+                caseNo.setText(hearing.caseNo);
+                date.setText(hearing.justTime + " | " + hearing.justDate);
+                venue.setText(hearing.venue);
 
                 // Display each party
                 for(Party party : parties) {
@@ -123,7 +127,7 @@ public class SchedulingActivity extends Activity {
 
                         // Send validPhoneNos through api call for notifications to be sent
                         RequestParams params = new RequestParams();
-                        params.put("phoneNos",validPhoneNos);
+                        params.put("phoneNos",validPhoneNos.toArray());
                         params.put("bookerNo",getSharedPreferences("DATA",MODE_PRIVATE).getString("phoneNo",null));
                         params.put("timeslot",selectedTimeSlot);
                         params.put("hearingId",hearing.hearingId);
@@ -132,7 +136,7 @@ public class SchedulingActivity extends Activity {
                         SupremeCourtRESTClient.post("bookNow", params, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                                if(statusCode == 400) {
+                                if(statusCode != 200) {
                                     Toast.makeText(context,R.string.bookingFailed,Toast.LENGTH_SHORT).show();
                                     button.setClickable(true);
                                     button.setText("Book now");
@@ -261,6 +265,7 @@ public class SchedulingActivity extends Activity {
     }
 
     boolean validate(List<String> phoneNos, int checkRadioButtonId) {
+        boolean invalidPhoneNoPresent = false;
         //TODO a more robust validation of phoneNos
         // If no phone number is entered and there are more than one party in this hearing...
         if(phoneNos.size() == 0 && hearing.parties.size() > 1) {
@@ -271,6 +276,17 @@ public class SchedulingActivity extends Activity {
         else if(checkRadioButtonId == -1) {
             Toast.makeText(context,R.string.noTimeslotSelected,Toast.LENGTH_SHORT).show();
             return false;
+        } else if(phoneNos.size() > 0){
+            for(String phoneNo : phoneNos) {
+                if(!Pattern.matches("[9|8][0-9]{7}",phoneNo)) {
+                    invalidPhoneNoPresent = true;
+                    break;
+                }
+            }
+            if(invalidPhoneNoPresent) {
+                Toast.makeText(context,R.string.invalidPhoneNo,Toast.LENGTH_SHORT).show();
+            }
+            return !invalidPhoneNoPresent;
         }
         else {
             return true;

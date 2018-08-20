@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SupremeCourt</string>
     <string name="loginUser">User</string>
-    <string name="searchLawFirm">Search Law Firm</string>
+    <string name="searchLawFirm">Find hearing by law firm</string>
     <string name="searchCase">Search Case</string>
     <string name="app_label">SupremeCourt</string>
     <string name="search_hint">Search law firm or case name</string>
@@ -32,4 +32,5 @@
     <string name="slotOutdated">Time slot is outdated!</string>
     <string name="acceptBookingFailed">Unable to accept booking. Please try again.</string>
     <string name="rejectBookingFailed">Unable to reject booking. Please try again.</string>
+    <string name="invalidPhoneNo">Invalid mobile phone number entered. Please enter a valid number.</string>
 </resources>

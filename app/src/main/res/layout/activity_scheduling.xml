@@ -15,36 +15,55 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:textStyle="bold"
-                android:gravity="center"
-                android:id="@+id/date"
+            <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
+                android:layout_height="10dp" />
             <TextView
                 android:textStyle="bold"
                 android:textSize="15dp"
                 android:gravity="center"
-                android:id="@+id/case_info"
+                android:id="@+id/case_name_scheduling"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="20dp" />
+                android:layout_height="5dp" />
+            <TextView
+                android:textStyle="bold"
+                android:gravity="center"
+                android:id="@+id/case_no"
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+            <TextView
+                android:id="@+id/date"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <TextView
+                android:id="@+id/venue"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
         </LinearLayout>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="200dp">
-        <LinearLayout
-            android:id="@+id/list_of_parties"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/list_of_parties"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </LinearLayout>
+            </LinearLayout>
         </ScrollView>
         <Space
             android:layout_width="match_parent"
@@ -56,7 +75,7 @@
             android:layout_gravity="center_horizontal"/>
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="100dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +92,7 @@
         </ScrollView>
         <Space
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="20dp" />
         <Button
             android:id="@+id/book_slot"
             android:layout_gravity="center_horizontal"
